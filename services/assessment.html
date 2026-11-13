@@ -41,38 +41,52 @@
         <a class="btn btn-primary" href="/services/assessment" data-nav="assessment" aria-current="page">Book an assessment</a>
       </div>
     </details>
-    <a class="btn btn-primary btn-nav" href="/services/assessment" data-nav="assessment" aria-current="page">Book an assessment</a>
+    <a class="btn btn-secondary btn-nav" href="/services/assessment" data-nav="assessment" aria-current="page">Book an assessment</a>
   </div>
 </div>
 <main>
-<header class="dark assess-hero">
+<header class="dark book-hero">
   <div class="wrap">
-    <div class="copy">
-      <span class="pill">Operations assessment</span>
-      <h1>Book an operations assessment.</h1>
+    <div class="intro">
+      <h1>Book an operations assessment</h1>
       <p class="lede">Ninety minutes with your team, screens shared. You leave with a map of
         every system and every hand-off in the business, and the automations worth building
         first.</p>
-      <div class="ctas">
-        <a class="btn btn-primary" href="mailto:hello@limeos.ai?subject=Operations%20assessment">Book an assessment</a>
-        <span class="mail">hello@limeos.ai</span>
-      </div>
       <div class="facts"><span><b>90</b> minutes</span><span>On video, screens shared</span><span>With your team</span></div>
     </div>
-    <div class="photo">
-      <img src="/services/images/limeos-estimate-desk.jpg" width="1536" height="1024" fetchpriority="high"
-        alt="A desk with a laptop, a printed estimate, a tape measure and a calculator">
-    </div>
+
+    <form class="booking" id="booking" novalidate>
+      <h2>Request a session</h2>
+      <div class="row2">
+        <div class="field"><label for="b-name">Your name</label>
+          <input id="b-name" name="name" autocomplete="name" required></div>
+        <div class="field"><label for="b-company">Company</label>
+          <input id="b-company" name="company" autocomplete="organization" required></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label for="b-trade">Trade</label>
+          <select id="b-trade" name="trade">
+            <option>Painting</option><option>Drywall</option><option>Pest control</option>
+            <option>Home services</option><option>Other</option>
+          </select></div>
+        <div class="field"><label for="b-phone">Phone <span>(optional)</span></label>
+          <input id="b-phone" name="phone" type="tel" autocomplete="tel"></div>
+      </div>
+      <div class="field"><label for="b-email">Email</label>
+        <input id="b-email" name="email" type="email" autocomplete="email" required></div>
+      <div class="field"><label for="b-times">Times that suit your team</label>
+        <textarea id="b-times" name="times" rows="2" placeholder="e.g. Tuesday or Thursday morning"></textarea></div>
+      <button class="btn btn-primary" type="submit">Send request</button>
+      <p class="note" id="b-note" aria-live="polite">Opens your email app with these details
+        filled in. Or write to <span class="mail">hello@limeos.ai</span></p>
+    </form>
   </div>
 </header>
 
-<section class="section">
-  <div class="wrap">
-    <div class="head head-left">
-      <span class="pill">The 90 minutes</span>
-      <h2>What happens in the session.</h2>
-    </div>
-    <ol class="agenda">
+<section class="s-first">
+  <div class="wrap duo">
+    <h2>What happens in the session</h2>
+    <ol class="numbered">
       <li><span class="n">01</span><div><h3>How a normal day runs</h3>
         <p>You walk us through a day, from the first call in the morning to the last job
           closed out.</p></div></li>
@@ -88,11 +102,10 @@
   </div>
 </section>
 
-<section class="section tinted">
-  <div class="wrap grid2">
-    <div class="split-copy">
-      <span class="pill">You leave with</span>
-      <h2>A map, and a place to start.</h2>
+<section class="s-128 warm">
+  <div class="wrap duo even">
+    <div class="copy">
+      <h2>You leave with a map and a place to start</h2>
       <ul class="ticks">
         <li>A map of every system and every hand-off</li>
         <li>A list of the tasks people do by hand</li>
@@ -100,9 +113,8 @@
         <li>A phased proposal afterwards, if you want one</li>
       </ul>
     </div>
-    <div class="split-copy">
-      <span class="pill">Who should be there</span>
-      <h2>The people who run the day.</h2>
+    <div class="copy">
+      <h2>Bring the people who run the day</h2>
       <ul class="ticks">
         <li>The owner</li>
         <li>Whoever runs the office</li>
@@ -113,22 +125,42 @@
   </div>
 </section>
 
-<section class="section">
-  <div class="wrap book">
-    <div class="split-copy">
-      <span class="pill">Book a time</span>
-      <h2>Email us and we'll send an invite.</h2>
-      <p>Send a couple of times that suit your team. We'll reply with a video link and a
-        short note on what to have ready.</p>
-    </div>
-    <div class="book-card">
-      <span class="kicker">Email</span>
-      <span class="addr">hello@limeos.ai</span>
-      <p>Subject line: Operations assessment</p>
-      <a class="btn btn-dark" href="mailto:hello@limeos.ai?subject=Operations%20assessment">Write the email</a>
-    </div>
-  </div>
-</section>
+<script>
+(function(){
+  var form = document.getElementById("booking");
+  if (!form) return;
+  var note = document.getElementById("b-note");
+  function val(id){ return document.getElementById(id).value.trim(); }
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    var first = null;
+    ["b-name", "b-company", "b-email"].forEach(function(id){
+      var el = document.getElementById(id), v = el.value.trim();
+      var bad = !v || (el.type === "email" && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v));
+      el.setAttribute("aria-invalid", bad ? "true" : "false");
+      if (bad && !first) first = el;
+    });
+    if (first){
+      note.textContent = "Add your name, company and a valid email, then send.";
+      first.focus();
+      return;
+    }
+    var body = [
+      "Name: " + val("b-name"),
+      "Company: " + val("b-company"),
+      "Trade: " + val("b-trade"),
+      "Email: " + val("b-email"),
+      "Phone: " + (val("b-phone") || "-"),
+      "",
+      "Times that suit us: " + (val("b-times") || "-")
+    ].join("\n");
+    location.href = "mailto:hello@limeos.ai?subject=" +
+      encodeURIComponent("Operations assessment: " + val("b-company")) +
+      "&body=" + encodeURIComponent(body);
+    note.textContent = "Your email app should open with the request ready to send. If it doesn't, write to hello@limeos.ai.";
+  });
+})();
+</script>
 
 </main>
 <footer class="footer">
@@ -137,12 +169,19 @@
       <a class="brand" href="/services/" aria-label="LimeOS home"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 617 188" aria-hidden="true" focusable="false"><g transform="translate(18.00,18.00)"><g transform="translate(-28.05,-45.72) scale(1.03904)"><path d="M74 132 L33 190 M126 132 L167 190" stroke="#0E1F1D" stroke-width="5.0" stroke-linecap="round" fill="none"/><rect x="74" y="142" width="52" height="7" rx="2.5" fill="#0E1F1D" opacity="0.44"/><rect x="66" y="159" width="69" height="7" rx="2.5" fill="#0E1F1D" opacity="0.44"/><rect x="55" y="177" width="89" height="7" rx="2.5" fill="#0E1F1D" opacity="0.44"/><path d="M58 148 V74 q0-30 42-30 q42 0 42 30 v74 Z" fill="#0D9488"/><path d="M68 92 q0-24 32-24 q32 0 32 24 v10 H68 Z" fill="#0E1F1D" opacity="0.52"/><rect x="70" y="120" width="14" height="9" rx="4.5" fill="#FFFFFF" opacity=".92"/><rect x="116" y="120" width="14" height="9" rx="4.5" fill="#FFFFFF" opacity=".92"/><rect x="58" y="140" width="84" height="8" fill="#0E1F1D" opacity="0.52"/></g></g><g transform="translate(191.90,120.86)"><g fill="#0E1F1D"><path d="M76 0V686H225V127H571V0Z" transform="translate(0.00,0) scale(0.10787,-0.10787)"/><path d="M64 603V723H203V603ZM64 0V526H203V0Z" transform="translate(62.86,0) scale(0.10787,-0.10787)"/><path d="M64 0V526H179L190 454H197Q214 480 237.5 499.0Q261 518 290.5 528.0Q320 538 354 538Q404 538 440.5 518.0Q477 498 497 454H504Q521 480 545.0 499.0Q569 518 600.0 528.0Q631 538 666 538Q716 538 752.5 520.0Q789 502 810.0 461.5Q831 421 831 357V0H692V332Q692 357 686.5 374.5Q681 392 671.0 402.5Q661 413 646.0 418.0Q631 423 614 423Q586 423 564.0 408.0Q542 393 529.5 367.0Q517 341 517 307V0H378V332Q378 357 372.5 374.5Q367 392 357.0 402.5Q347 413 332.5 418.0Q318 423 300 423Q273 423 250.5 408.0Q228 393 215.5 367.0Q203 341 203 307V0Z" transform="translate(90.78,0) scale(0.10787,-0.10787)"/><path d="M303 -12Q216 -12 157.0 17.5Q98 47 68.0 108.0Q38 169 38 263Q38 358 68.0 418.5Q98 479 156.5 508.5Q215 538 300 538Q380 538 435.0 509.5Q490 481 518.0 421.5Q546 362 546 268V232H179Q181 186 193.5 154.0Q206 122 232.5 106.5Q259 91 303 91Q327 91 346.5 97.0Q366 103 380.0 115.0Q394 127 402.0 145.0Q410 163 410 186H546Q546 136 528.0 99.0Q510 62 478.0 37.5Q446 13 401.5 0.5Q357 -12 303 -12ZM181 320H403Q403 350 395.5 372.0Q388 394 375.0 408.0Q362 422 343.5 428.5Q325 435 302 435Q264 435 238.5 422.5Q213 410 199.5 384.5Q186 359 181 320Z" transform="translate(186.00,0) scale(0.10787,-0.10787)"/></g><g fill="#0D9488" transform="translate(249.00,0)"><path d="M396 -12Q287 -12 208.0 27.0Q129 66 87.0 145.0Q45 224 45 343Q45 464 87.0 542.5Q129 621 208.0 659.5Q287 698 396 698Q507 698 585.5 659.5Q664 621 706.0 542.5Q748 464 748 343Q748 224 706.0 145.0Q664 66 585.5 27.0Q507 -12 396 -12ZM396 110Q445 110 482.0 124.0Q519 138 544.0 166.0Q569 194 582.0 234.5Q595 275 595 327V358Q595 411 582.0 452.0Q569 493 544.0 520.5Q519 548 482.0 562.0Q445 576 396 576Q348 576 311.0 562.0Q274 548 249.0 520.5Q224 493 211.5 452.0Q199 411 199 358V327Q199 275 211.5 234.5Q224 194 249.0 166.0Q274 138 311.0 124.0Q348 110 396 110Z" transform="translate(0.00,0) scale(0.10787,-0.10787)"/><path d="M343 -12Q283 -12 229.0 0.0Q175 12 133.5 38.5Q92 65 68.5 105.5Q45 146 45 204Q45 209 45.0 214.5Q45 220 46 223H194Q193 220 193.0 215.0Q193 210 193 206Q193 174 210.5 152.0Q228 130 262.0 119.0Q296 108 341 108Q370 108 392.5 111.5Q415 115 432.5 121.5Q450 128 461.5 137.0Q473 146 478.5 158.0Q484 170 484 185Q484 212 466.5 229.0Q449 246 418.5 258.0Q388 270 350.0 280.0Q312 290 272.0 300.5Q232 311 194.0 326.5Q156 342 126.0 364.0Q96 386 78.0 420.0Q60 454 60 502Q60 553 81.5 590.0Q103 627 142.0 651.0Q181 675 232.0 686.5Q283 698 343 698Q399 698 449.0 686.5Q499 675 537.0 650.0Q575 625 596.5 587.0Q618 549 618 497V485H473V493Q473 520 457.0 539.0Q441 558 412.0 569.0Q383 580 344 580Q302 580 272.5 572.0Q243 564 227.5 548.5Q212 533 212 512Q212 488 229.5 472.5Q247 457 277.5 445.5Q308 434 346.0 425.0Q384 416 424.0 405.0Q464 394 502.0 379.0Q540 364 570.0 341.5Q600 319 618.0 286.0Q636 253 636 207Q636 128 598.0 80.0Q560 32 494.0 10.0Q428 -12 343 -12Z" transform="translate(84.65,0) scale(0.10787,-0.10787)"/></g></g></svg></a>
       <p class="tag">The rails a business runs on when nobody is driving.</p>
     </div>
-    <nav aria-label="Footer">
-      <h4>Company</h4>
+    <nav aria-label="Pages">
+      <h4>LimeOS</h4>
       <a href="/services/how-it-works">How it works</a>
       <a href="/services/industries">Industries</a>
       <a href="/services/about">About</a>
       <a href="/services/assessment">Book an assessment</a>
+    </nav>
+    <nav aria-label="Industries">
+      <h4>Industries</h4>
+      <a href="/services/industries#painting">Painting</a>
+      <a href="/services/industries#drywall">Drywall</a>
+      <a href="/services/industries#pest-control">Pest control</a>
+      <a href="/services/industries#home-services">Home services</a>
     </nav>
     <div class="col">
       <h4>Contact</h4>
@@ -151,7 +190,7 @@
   </div>
   <div class="wrap foot-base">
     <span>© 2026 LimeOS</span>
-    <span>limeos.ai</span>
+    <a href="https://limeos.ai/">limeos.ai</a>
   </div>
 </footer>
 </body>
